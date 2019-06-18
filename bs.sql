@@ -19,7 +19,7 @@ create table Book(
     content varchar(255) null,
     pic varchar(255) null,
     bookUrl varchar(255) null,
-    uid integer not null,
+    username varchar(64) not null,
     state integer not null,
     time timestamp null
 );
@@ -29,6 +29,9 @@ create table Ord(
     bookid integer not null,
     bookname varchar(64) not null,
     ordertime timestamp not null,
+    buyer varchar(64) not null,
+    seller varchar(64) not null,
+    ordertype integer not null,
     address varchar(255) null,
     state integer not null,
     bcom integer not null,
