@@ -3,14 +3,17 @@ package bs.demo.controller;
 import bs.demo.modelandrespository.Book;
 import bs.demo.modelandrespository.BookRespository;
 import bs.demo.modelandrespository.MsgResponsebody;
+import bs.demo.modelandrespository.SearchResponsebody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*",allowCredentials = "true")
 @RestController
@@ -56,5 +59,46 @@ public class BookController {
         int bookId = Integer.parseInt(httpMessageBody.get("bookId"));
         System.out.println(bookId);
         return bookRespository.findByBookId(bookId);
+    }
+
+    @RequestMapping(value = "/searchbook",method = RequestMethod.POST)
+    public List<SearchResponsebody> searchBook(@RequestBody Map<String,String> httpMessageBody) {
+        String choice = httpMessageBody.get("choice");
+        String content = httpMessageBody.get("content");
+        System.out.println(choice);
+        System.out.println(content);
+        switch (choice) {
+            case "1": {
+                List<Book> books = bookRespository.findAllByBookName(content);
+                List<SearchResponsebody> searchResponsebodies = books
+                        .stream()
+                        .map(r -> new SearchResponsebody(r))
+                        .collect(Collectors.toList());
+                return searchResponsebodies;
+            }
+            case "2": {
+                List<Book> books = bookRespository.findAllByBookId(Integer.parseInt(content));
+                List<SearchResponsebody> searchResponsebodies = books
+                        .stream()
+                        .map(r -> new SearchResponsebody(r))
+                        .collect(Collectors.toList());
+                return searchResponsebodies;
+            }
+            case "3": {
+                List<Book> books = bookRespository.findAllByCategory(content);
+                List<SearchResponsebody> searchResponsebodies = books
+                        .stream()
+                        .map(r -> new SearchResponsebody(r))
+                        .collect(Collectors.toList());
+                return searchResponsebodies;
+            }
+            default:
+                return null;
+        }
+    }
+
+    @RequestMapping(value = "/findAll",method = RequestMethod.GET)
+    public List<Book> homeBooks(){
+        return bookRespository.findAll();
     }
 }
