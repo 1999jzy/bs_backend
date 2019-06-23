@@ -37,3 +37,17 @@ create table Ord(
     bcom integer not null,
     scom integer not null
 );
+
+create table chatlist(
+	chatid integer primary key auto_increment,
+    user varchar(64) not null,
+    anothoer_user varchar(64) not null
+);
+
+create table chatmsg(
+	msgid integer primary key auto_increment,
+    chatid integer not null,
+    sender varchar(64) not null,
+    content varchar(255) not null,
+    time timestamp null
+)

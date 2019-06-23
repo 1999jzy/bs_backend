@@ -53,4 +53,24 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value = "/init",method = RequestMethod.POST)
+    public User Init(@RequestBody Map<String ,String> httpMessageBody){
+        String username = httpMessageBody.get("username");
+        return userRespository.findByUsername(username);
+    }
+
+    @RequestMapping(value = "/changeAva", method = RequestMethod.POST)
+    public MsgResponsebody changeAva(@RequestBody Map<String ,String> httpMessageBody){
+        String username = httpMessageBody.get("username");
+        String pic = httpMessageBody.get("pic");
+        try {
+            User user = userRespository.findByUsername(username);
+            user.setFace(pic);
+            userRespository.save(user);
+            return new MsgResponsebody(1,"头像更换成功");
+        }
+        catch (Exception e){
+            return new MsgResponsebody(-1,"未知错误");
+        }
+    }
 }
