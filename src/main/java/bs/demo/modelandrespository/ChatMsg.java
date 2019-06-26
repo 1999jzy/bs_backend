@@ -1,9 +1,6 @@
 package bs.demo.modelandrespository;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -11,6 +8,7 @@ import java.sql.Timestamp;
 @Table(name = "chatmsg")
 public class ChatMsg implements Serializable {
     @Column(name = "msgid")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private int msgId;
     @Column(name = "chatid")

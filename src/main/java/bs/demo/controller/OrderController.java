@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*",allowCredentials = "true")
 @RestController
@@ -55,8 +56,57 @@ public class OrderController {
         }
     }
 
-    @RequestMapping(value = "/mybuy",method = RequestMethod.POST)
-    public List<Order> myBuy(@RequestBody Map<String,String> httpMessageBody){
-        return null;
+    @RequestMapping(value = "/myBuy",method = RequestMethod.POST)
+    public List<OrderResponseBody> myBuy(@RequestBody Map<String,String> httpMessageBody){
+        String username = httpMessageBody.get("username");
+        List<OrderResponseBody> orderResponseBodies = orderRespository.findAllByBuyer(username)
+                .stream()
+                .map(r->new OrderResponseBody(r))
+                .collect(Collectors.toList());
+        return orderResponseBodies;
+    }
+
+    @RequestMapping(value = "/mySell",method = RequestMethod.POST)
+    public List<OrderResponseBody> mySell(@RequestBody Map<String,String> httpMessageBody){
+        String username = httpMessageBody.get("username");
+        List<OrderResponseBody> orderResponseBodies = orderRespository.findAllBySeller(username)
+                .stream()
+                .map(r->new OrderResponseBody(r))
+                .collect(Collectors.toList());
+        return orderResponseBodies;
+    }
+
+    @RequestMapping(value = "modifyScom", method = RequestMethod.POST)
+    public MsgResponsebody modifyScom(@RequestBody Map<String,String> httpMessageBody){
+        int orderID = Integer.parseInt(httpMessageBody.get("orderId"));
+        Order order = orderRespository.findByOrderid(orderID);
+        order.setScom(1);
+        if(order.getBcom()==1){
+            order.setState(1);
+        }
+        try{
+            orderRespository.save(order);
+            return new MsgResponsebody(1,"出货成功");
+        }
+        catch (Exception e){
+            return new MsgResponsebody(-1,"未知错误");
+        }
+    }
+
+    @RequestMapping(value = "modifyBcom", method = RequestMethod.POST)
+    public MsgResponsebody modifyBcom(@RequestBody Map<String,String> httpMessageBody){
+        int orderID = Integer.parseInt(httpMessageBody.get("orderId"));
+        Order order = orderRespository.findByOrderid(orderID);
+        order.setBcom(1);
+        if(order.getScom()==1){
+            order.setState(1);
+        }
+        try{
+            orderRespository.save(order);
+            return new MsgResponsebody(1,"确认收货");
+        }
+        catch (Exception e){
+            return new MsgResponsebody(-1,"未知错误");
+        }
     }
 }

@@ -21,6 +21,7 @@ import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -112,11 +113,11 @@ public class Websocket {
     }
 
     private void sendMessage(String sender, int chatId, String msg) throws IOException {
-        System.out.println("运行到这里了1");
+        //System.out.println("运行到这里了1");
         ChatList chat = chatListRespository.findByChatid(chatId);
-        System.out.println("运行到这里了2");
+        //System.out.println("运行到这里了2");
         String aid = sender.equals(chat.getUser())?chat.getAnotherUser():chat.getUser();
-        System.out.println("运行到这里了3");
+        //System.out.println("运行到这里了3");
         try{
             ChatMsg chatMsg = new ChatMsg();
             chatMsg.setChatId(chatId);
@@ -124,15 +125,28 @@ public class Websocket {
             chatMsg.setContent(msg);
             chatMsg.setTime(new Timestamp(new Date().getTime()));
             chatMsgRespository.save(chatMsg);
+
+            Map<String,Object> map = new HashMap<>();
+            map.put("msgId",chatMsg.getMsgId());
+            map.put("chatId",chatMsg.getChatId());
+            map.put("sender",chatMsg.getSender());
+            map.put("content",msg);
+            map.put("time",chatMsg.getTime());
+
+            for (Websocket item : clients.values()){
+                if(item.username.equals(aid) || item.username.equals(sender)){
+                    item.session.getAsyncRemote().sendText(JSON.toJSONString(map));
+                }
+            }
         }catch (Exception e){
             System.out.println("插入数据库失败");
         }
 
-        for (Websocket item : clients.values()){
-            if(item.username.equals(aid)){
-                item.session.getAsyncRemote().sendText(msg);
-            }
-        }
+//        for (Websocket item : clients.values()){
+//            if(item.username.equals(aid)){
+//                item.session.getAsyncRemote().sendText(msg);
+//            }
+//        }
 
     }
 
