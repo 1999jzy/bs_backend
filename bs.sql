@@ -50,4 +50,18 @@ create table chatmsg(
     sender varchar(64) not null,
     content varchar(255) not null,
     time timestamp null
+);
+
+drop table bookSeek;
+
+create table bookSeek(
+    seekId integer primary key auto_increment,
+    bookname varchar(64) not null,
+    seekPrice decimal(5,2) not null,
+    category varchar(64) not null,
+    message varchar(255) null,
+    username varchar(64) null,
+    pic varchar(255) null,
+    state integer not null ,
+    time timestamp null
 )
