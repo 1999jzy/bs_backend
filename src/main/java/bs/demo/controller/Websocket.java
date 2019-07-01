@@ -27,7 +27,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @CrossOrigin(value = "*", allowCredentials = "true")
 @Component
-@RestController
 @ServerEndpoint("/websocket/{username}")
 public class Websocket {
 
