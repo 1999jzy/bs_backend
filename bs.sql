@@ -52,7 +52,6 @@ create table chatmsg(
     time timestamp null
 );
 
-drop table bookSeek;
 
 create table bookSeek(
     seekId integer primary key auto_increment,
